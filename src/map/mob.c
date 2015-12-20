@@ -4049,6 +4049,7 @@ int mob_read_db_sub(config_setting_t *mobt, int n, const char *source)
 	 * Id: ID
 	 * SpriteName: "SPRITE_NAME"
 	 * Name: "Mob name"
+	 * JName: "Mob name"
 	 * // Optional fields
 	 * Lv: level
 	 * Hp: health
@@ -4138,6 +4139,13 @@ int mob_read_db_sub(config_setting_t *mobt, int n, const char *source)
 		}
 	} else {
 		safestrncpy(md.name, str, sizeof(md.name));
+	}
+
+	if (!libconfig->setting_lookup_string(mobt, "JName", &str) || !*str ) {
+		if (!inherit) {
+			safestrncpy(md.jname, md.name, sizeof(md.jname));
+		}
+	} else {
 		safestrncpy(md.jname, str, sizeof(md.jname));
 	}
 
