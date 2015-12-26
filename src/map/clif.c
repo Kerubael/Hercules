@@ -4566,7 +4566,7 @@ int clif_getareachar(struct block_list* bl,va_list ap) {
 			clif->getareachar_item(sd,(struct flooritem_data*) bl);
 			break;
 		case BL_SKILL:
-			clif->getareachar_skillunit(&sd->bl,(TBL_SKILL*)bl,SELF);
+			clif->getareachar_skillunit(&sd->bl, (struct skill_unit *)bl, SELF);
 			break;
 		default:
 			if(&sd->bl == bl)
@@ -4656,7 +4656,7 @@ int clif_insight(struct block_list *bl,va_list ap)
 				clif->getareachar_item(tsd,(struct flooritem_data*)bl);
 				break;
 			case BL_SKILL:
-				clif->getareachar_skillunit(&tsd->bl,(TBL_SKILL*)bl,SELF);
+				clif->getareachar_skillunit(&tsd->bl, (struct skill_unit *)bl, SELF);
 				break;
 			default:
 				clif->getareachar_unit(tsd,bl);
