@@ -98,12 +98,15 @@
 #endif // 20090603
 #endif // 20070227
 
-/* Feb 1st 2012 */
-#if PACKETVER >= 20120201
-#	define NEW_CARTS
-#	define MAX_CARTS 9
+#if PACKETVER >= 20120201 /* New Genetic Carts */
+	#define NEW_CARTS
+#if PACKETVER >= 20150805 /* Cart Decoration */
+	#define MAX_CARTS 12
 #else
-#	define MAX_CARTS 5
+	#define MAX_CARTS 9
+#endif
+#else
+	#define MAX_CARTS 5
 #endif
 
 #define MAX_INVENTORY 100
