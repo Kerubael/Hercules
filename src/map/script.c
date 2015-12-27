@@ -10142,18 +10142,20 @@ BUILDIN(initnpctimer)
 		struct script_data *data;
 		data = script_getdata(st,2);
 		script->get_val(st,data); // dereference if it's a variable
-		if( data_isstring(data) ) //NPC name
+		if (data_isstring(data)) {
+			//NPC name
 			nd = npc->name2id(script->conv_str(st, data));
-		else if( data_isint(data) ) {
+		} else if (data_isint(data)) {
 			//Flag
-			nd = (struct npc_data *)map->id2bl(st->oid);
+			nd = map->id2nd(st->oid);
 			flag = script->conv_num(st,data);
 		} else {
 			ShowError("initnpctimer: invalid argument type #1 (needs be int or string)).\n");
 			return false;
 		}
-	} else
-		nd = (struct npc_data *)map->id2bl(st->oid);
+	} else {
+		nd = map->id2nd(st->oid);
+	}
 
 	if( !nd )
 		return true;
@@ -10185,18 +10187,20 @@ BUILDIN(startnpctimer)
 		struct script_data *data;
 		data = script_getdata(st,2);
 		script->get_val(st,data); // dereference if it's a variable
-		if( data_isstring(data) ) //NPC name
+		if (data_isstring(data)) {
+			//NPC name
 			nd = npc->name2id(script->conv_str(st, data));
-		else if( data_isint(data) ) {
+		} else if (data_isint(data)) {
 			//Flag
-			nd = (struct npc_data *)map->id2bl(st->oid);
+			nd = map->id2nd(st->oid);
 			flag = script->conv_num(st,data);
 		} else {
 			ShowError("initnpctimer: invalid argument type #1 (needs be int or string)).\n");
 			return false;
 		}
-	} else
-		nd=(struct npc_data *)map->id2bl(st->oid);
+	} else {
+		nd = map->id2nd(st->oid);
+	}
 
 	if( !nd )
 		return true;
@@ -10225,18 +10229,20 @@ BUILDIN(stopnpctimer) {
 		struct script_data *data;
 		data = script_getdata(st,2);
 		script->get_val(st,data); // Dereference if it's a variable
-		if( data_isstring(data) ) //NPC name
+		if (data_isstring(data)) {
+			//NPC name
 			nd = npc->name2id(script->conv_str(st, data));
-		else if( data_isint(data) ) {
+		} else if (data_isint(data)) {
 			//Flag
-			nd = (struct npc_data *)map->id2bl(st->oid);
+			nd = map->id2nd(st->oid);
 			flag = script->conv_num(st,data);
 		} else {
 			ShowError("initnpctimer: invalid argument type #1 (needs be int or string)).\n");
 			return false;
 		}
-	} else
-		nd=(struct npc_data *)map->id2bl(st->oid);
+	} else {
+		nd = map->id2nd(st->oid);
+	}
 
 	if( !nd )
 		return true;
@@ -10258,10 +10264,9 @@ BUILDIN(getnpctimer)
 	if( script_hasdata(st,3) )
 		nd = npc->name2id(script_getstr(st,3));
 	else
-		nd = (struct npc_data *)map->id2bl(st->oid);
+		nd = map->id2nd(st->oid);
 
-	if( !nd || nd->bl.type != BL_NPC )
-	{
+	if (nd == NULL) {
 		script_pushint(st,0);
 		ShowError("getnpctimer: Invalid NPC.\n");
 		return false;
@@ -10296,9 +10301,9 @@ BUILDIN(setnpctimer)
 	if( script_hasdata(st,3) )
 		nd = npc->name2id(script_getstr(st,3));
 	else
-		nd = (struct npc_data *)map->id2bl(st->oid);
+		nd = map->id2nd(st->oid);
 
-	if( !nd || nd->bl.type != BL_NPC ) {
+	if (nd == NULL) {
 		script_pushint(st,1);
 		ShowError("setnpctimer: Invalid NPC.\n");
 		return false;
@@ -10315,10 +10320,9 @@ BUILDIN(setnpctimer)
 BUILDIN(attachnpctimer)
 {
 	struct map_session_data *sd;
-	struct npc_data *nd = (struct npc_data *)map->id2bl(st->oid);
+	struct npc_data *nd = map->id2nd(st->oid);
 
-	if( !nd || nd->bl.type != BL_NPC )
-	{
+	if (nd == NULL) {
 		script_pushint(st,1);
 		ShowError("setnpctimer: Invalid NPC.\n");
 		return false;
@@ -10348,10 +10352,9 @@ BUILDIN(detachnpctimer) {
 	if( script_hasdata(st,2) )
 		nd = npc->name2id(script_getstr(st,2));
 	else
-		nd = (struct npc_data *)map->id2bl(st->oid);
+		nd = map->id2nd(st->oid);
 
-	if( !nd || nd->bl.type != BL_NPC )
-	{
+	if (nd == NULL) {
 		script_pushint(st,1);
 		ShowError("detachnpctimer: Invalid NPC.\n");
 		return false;
@@ -10441,8 +10444,8 @@ BUILDIN(itemeffect)
 	if (sd == NULL)
 		return true;
 
-	nd = (struct npc_data *)map->id2bl(sd->npc_id);
-	if( nd == NULL )
+	nd = map->id2nd(sd->npc_id);
+	if (nd == NULL)
 		return false;
 
 	if( script_isstringtype(st, 2) ) {
@@ -11292,9 +11295,8 @@ BUILDIN(changecharsex)
 /*==========================================
  * Works like 'announce' but outputs in the common chat window
  *------------------------------------------*/
-BUILDIN(globalmes) {
-	struct block_list *bl = map->id2bl(st->oid);
-	struct npc_data *nd = (struct npc_data *)bl;
+BUILDIN(globalmes)
+{
 	const char *name=NULL,*mes;
 
 	mes=script_getstr(st,2);
@@ -11304,6 +11306,8 @@ BUILDIN(globalmes) {
 		//  npc name to display
 		name=script_getstr(st,3);
 	} else {
+		struct npc_data *nd = map->id2nd(st->oid);
+		nullpo_retr(false, nd);
 		name=nd->name; //use current npc name
 	}
 
@@ -11330,7 +11334,7 @@ BUILDIN(waitingroom)
 	int minLvl =  script_hasdata(st,7) ? script_getnum(st,7) : 1;
 	int maxLvl =  script_hasdata(st,8) ? script_getnum(st,8) : MAX_LEVEL;
 
-	nd = (struct npc_data *)map->id2bl(st->oid);
+	nd = map->id2nd(st->oid);
 	if (nd != NULL) {
 		int pub = 1;
 		chat->create_npc_chat(nd, title, limit, pub, trigger, ev, zeny, minLvl, maxLvl);
@@ -11348,8 +11352,8 @@ BUILDIN(delwaitingroom) {
 	if( script_hasdata(st,2) )
 		nd = npc->name2id(script_getstr(st, 2));
 	else
-		nd = (struct npc_data *)map->id2bl(st->oid);
-	if( nd != NULL )
+		nd = map->id2nd(st->oid);
+	if (nd != NULL)
 		chat->delete_npc_chat(nd);
 	return true;
 }
@@ -11365,9 +11369,9 @@ BUILDIN(waitingroomkickall) {
 	if( script_hasdata(st,2) )
 		nd = npc->name2id(script_getstr(st,2));
 	else
-		nd = (struct npc_data *)map->id2bl(st->oid);
+		nd = map->id2nd(st->oid);
 
-	if( nd != NULL && (cd=(struct chat_data *)map->id2bl(nd->chat_id)) != NULL )
+	if (nd != NULL && (cd=map->id2cd(nd->chat_id)) != NULL)
 		chat->npc_kick_all(cd);
 	return true;
 }
@@ -11383,9 +11387,9 @@ BUILDIN(enablewaitingroomevent) {
 	if( script_hasdata(st,2) )
 		nd = npc->name2id(script_getstr(st, 2));
 	else
-		nd = (struct npc_data *)map->id2bl(st->oid);
+		nd = map->id2nd(st->oid);
 
-	if( nd != NULL && (cd=(struct chat_data *)map->id2bl(nd->chat_id)) != NULL )
+	if (nd != NULL && (cd=map->id2cd(nd->chat_id)) != NULL)
 		chat->enable_event(cd);
 	return true;
 }
@@ -11401,9 +11405,9 @@ BUILDIN(disablewaitingroomevent) {
 	if( script_hasdata(st,2) )
 		nd = npc->name2id(script_getstr(st, 2));
 	else
-		nd = (struct npc_data *)map->id2bl(st->oid);
+		nd = map->id2nd(st->oid);
 
-	if( nd != NULL && (cd=(struct chat_data *)map->id2bl(nd->chat_id)) != NULL )
+	if (nd != NULL && (cd=map->id2cd(nd->chat_id)) != NULL)
 		chat->disable_event(cd);
 	return true;
 }
@@ -11436,9 +11440,9 @@ BUILDIN(getwaitingroomstate) {
 	if( script_hasdata(st,3) )
 		nd = npc->name2id(script_getstr(st, 3));
 	else
-		nd = (struct npc_data *)map->id2bl(st->oid);
+		nd = map->id2nd(st->oid);
 
-	if( nd == NULL || (cd=(struct chat_data *)map->id2bl(nd->chat_id)) == NULL ) {
+	if (nd == NULL || (cd=map->id2cd(nd->chat_id)) == NULL) {
 		script_pushint(st, -1);
 		return true;
 	}
@@ -11487,8 +11491,8 @@ BUILDIN(warpwaitingpc)
 	struct npc_data* nd;
 	struct chat_data* cd;
 
-	nd = (struct npc_data *)map->id2bl(st->oid);
-	if( nd == NULL || (cd=(struct chat_data *)map->id2bl(nd->chat_id)) == NULL )
+	nd = map->id2nd(st->oid);
+	if (nd == NULL || (cd=map->id2cd(nd->chat_id)) == NULL)
 		return true;
 
 	map_name = script_getstr(st,2);
@@ -12148,7 +12152,7 @@ BUILDIN(flagemblem)
 
 	if(g_id < 0) return true;
 
-	nd = (struct npc_data *)map->id2nd(st->oid);
+	nd = map->id2nd(st->oid);
 	if( nd == NULL ) {
 		ShowError("script:flagemblem: npc %d not found\n", st->oid);
 	} else if( nd->subtype != SCRIPT ) {
@@ -13886,12 +13890,11 @@ BUILDIN(npctalk)
 
 	if (script_hasdata(st, 3)) {
 		nd = npc->name2id(script_getstr(st, 3));
-	}
-	else {
-		nd = (struct npc_data *)map->id2bl(st->oid);
+	} else {
+		nd = map->id2nd(st->oid);
 	}
 
-	if (nd) {
+	if (nd != NULL) {
 		char name[NAME_LENGTH], message[256];
 		safestrncpy(name, nd->name, sizeof(name));
 		strtok(name, "#"); // discard extra name identifier if present
@@ -13908,9 +13911,9 @@ BUILDIN(npcspeed) {
 	int speed;
 
 	speed = script_getnum(st,2);
-	nd = (struct npc_data *)map->id2bl(st->oid);
+	nd = map->id2nd(st->oid);
 
-	if( nd ) {
+	if (nd != NULL) {
 		unit->bl2ud2(&nd->bl); // ensure nd->ud is safe to edit
 		nd->speed = speed;
 		nd->ud->state.speed_changed = 1;
@@ -13919,14 +13922,15 @@ BUILDIN(npcspeed) {
 	return true;
 }
 // make an npc walk to a position [Valaris]
-BUILDIN(npcwalkto) {
-	struct npc_data *nd=(struct npc_data *)map->id2bl(st->oid);
+BUILDIN(npcwalkto)
+{
+	struct npc_data *nd = map->id2nd(st->oid);
 	int x=0,y=0;
 
 	x=script_getnum(st,2);
 	y=script_getnum(st,3);
 
-	if( nd ) {
+	if (nd != NULL) {
 		unit->bl2ud2(&nd->bl); // ensure nd->ud is safe to edit
 		if (!nd->status.hp) {
 			status_calc_npc(nd, SCO_FIRST);
@@ -13939,10 +13943,11 @@ BUILDIN(npcwalkto) {
 	return true;
 }
 // stop an npc's movement [Valaris]
-BUILDIN(npcstop) {
-	struct npc_data *nd = (struct npc_data *)map->id2bl(st->oid);
+BUILDIN(npcstop)
+{
+	struct npc_data *nd = map->id2nd(st->oid);
 
-	if( nd ) {
+	if (nd != NULL) {
 		unit->bl2ud2(&nd->bl); // ensure nd->ud is safe to edit
 		unit->stop_walking(&nd->bl, STOPWALKING_FLAG_FIXPOS|STOPWALKING_FLAG_NEXTCELL);
 	}
@@ -13951,9 +13956,10 @@ BUILDIN(npcstop) {
 }
 
 // set click npc distance [4144]
-BUILDIN(setnpcdistance) {
-	struct npc_data *nd = (struct npc_data *) map->id2bl (st->oid);
-	if (!nd)
+BUILDIN(setnpcdistance)
+{
+	struct npc_data *nd = map->id2nd(st->oid);
+	if (nd == NULL)
 		return false;
 
 	nd->area_size = script_getnum(st, 2);
@@ -13964,23 +13970,20 @@ BUILDIN(setnpcdistance) {
 // return current npc direction [4144]
 BUILDIN(getnpcdir)
 {
-	struct npc_data *nd = 0;
+	struct npc_data *nd = NULL;
 
-	if (script_hasdata(st, 2))
-	{
+	if (script_hasdata(st, 2)) {
 		nd = npc->name2id (script_getstr(st, 2));
 	}
-	if (!nd && !st->oid)
-	{
+	if (nd == NULL && !st->oid) {
 		script_pushint(st, -1);
 		return true;
 	}
 
-	if (!nd)
-		nd = (struct npc_data *) map->id2bl (st->oid);
+	if (nd == NULL)
+		nd = map->id2nd(st->oid);
 
-	if (!nd)
-	{
+	if (nd == NULL) {
 		script_pushint(st, -1);
 		return true;
 	}
@@ -13994,22 +13997,19 @@ BUILDIN(getnpcdir)
 BUILDIN(setnpcdir)
 {
 	int newdir;
-	struct npc_data *nd = 0;
+	struct npc_data *nd = NULL;
 
-	if (script_hasdata(st, 3))
-	{
-		nd = npc->name2id (script_getstr(st, 2));
+	if (script_hasdata(st, 3)) {
+		nd = npc->name2id(script_getstr(st, 2));
 		newdir = script_getnum(st, 3);
-	}
-	else if (script_hasdata(st, 2))
-	{
+	} else if (script_hasdata(st, 2)) {
 		if (!st->oid)
 			return false;
 
-		nd = (struct npc_data *) map->id2bl (st->oid);
+		nd = map->id2nd(st->oid);
 		newdir = script_getnum(st, 2);
 	}
-	if (!nd)
+	if (nd == NULL)
 		return false;
 
 	if (newdir < 0)
@@ -14030,23 +14030,20 @@ BUILDIN(setnpcdir)
 // return npc class [4144]
 BUILDIN(getnpcclass)
 {
-	struct npc_data *nd = 0;
+	struct npc_data *nd = NULL;
 
-	if (script_hasdata(st, 2))
-	{
-		nd = npc->name2id (script_getstr(st, 2));
+	if (script_hasdata(st, 2)) {
+		nd = npc->name2id(script_getstr(st, 2));
 	}
-	if (!nd && !st->oid)
-	{
+	if (nd == NULL && !st->oid) {
 		script_pushint(st, -1);
 		return false;
 	}
 
-	if (!nd)
-		nd = (struct npc_data *) map->id2bl(st->oid);
+	if (nd == NULL)
+		nd = map->id2nd(st->oid);
 
-	if (!nd)
-	{
+	if (nd == NULL) {
 		script_pushint(st, -1);
 		return false;
 	}
@@ -16036,7 +16033,7 @@ BUILDIN(npcshopattach) {
 	}
 
 	if (flag)
-		nd->master_nd = ((struct npc_data *)map->id2bl(st->oid));
+		nd->master_nd = map->id2nd(st->oid);
 	else
 		nd->master_nd = NULL;
 
@@ -17414,9 +17411,9 @@ BUILDIN(waitingroom2bg) {
 	if( script_hasdata(st,7) )
 		nd = npc->name2id(script_getstr(st,7));
 	else
-		nd = (struct npc_data *)map->id2bl(st->oid);
+		nd = map->id2nd(st->oid);
 
-	if( nd == NULL || (cd = (struct chat_data *)map->id2bl(nd->chat_id)) == NULL ) {
+	if (nd == NULL || (cd = map->id2cd(nd->chat_id)) == NULL) {
 		script_pushint(st,0);
 		return true;
 	}
@@ -17475,7 +17472,7 @@ BUILDIN(waitingroom2bg_single) {
 	y = script_getnum(st,5);
 	nd = npc->name2id(script_getstr(st,6));
 
-	if( nd == NULL || (cd = (struct chat_data *)map->id2bl(nd->chat_id)) == NULL || cd->users <= 0 )
+	if (nd == NULL || (cd = map->id2cd(nd->chat_id)) == NULL || cd->users <= 0)
 		return true;
 
 	if( (sd = cd->usersd[0]) == NULL )
@@ -18817,7 +18814,7 @@ BUILDIN(npcskill)
 	if (sd == NULL)
 		return true;
 
-	nd = (struct npc_data *)map->id2bl(sd->npc_id);
+	nd = map->id2nd(sd->npc_id);
 
 	if (stat_point > battle_config.max_third_parameter) {
 		ShowError("npcskill: stat point exceeded maximum of %d.\n",battle_config.max_third_parameter );
