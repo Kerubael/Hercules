@@ -6104,7 +6104,7 @@ BUILDIN(warpguild)
 	}
 
 	iter = mapit_getallusers();
-	for (pl_sd = (struct map_session_data *)mapit->first(iter); mapit->exists(iter); pl_sd = (struct map_session_data *)mapit->next(iter)) {
+	for (pl_sd = BL_UCAST(BL_PC, mapit->first(iter)); mapit->exists(iter); pl_sd = BL_UCAST(BL_PC, mapit->next(iter))) {
 		if( pl_sd->status.guild_id != gid )
 			continue;
 
@@ -10539,7 +10539,7 @@ BUILDIN(getusersname)
 
 	group_level = pc_get_group_level(sd);
 	iter = mapit_getallusers();
-	for (pl_sd = (struct map_session_data *)mapit->first(iter); mapit->exists(iter); pl_sd = (struct map_session_data *)mapit->next(iter)) {
+	for (pl_sd = BL_UCAST(BL_PC, mapit->first(iter)); mapit->exists(iter); pl_sd = BL_UCAST(BL_PC, mapit->next(iter))) {
 		if (pc_has_permission(pl_sd, PC_PERM_HIDE_SESSION) && pc_get_group_level(pl_sd) > group_level)
 			continue; // skip hidden sessions
 
@@ -11884,7 +11884,7 @@ BUILDIN(pvpon)
 		return true;
 
 	iter = mapit_getallusers();
-	for (sd = (struct map_session_data *)mapit->first(iter); mapit->exists(iter); sd = (struct map_session_data *)mapit->next(iter)) {
+	for (sd = BL_UCAST(BL_PC, mapit->first(iter)); mapit->exists(iter); sd = BL_UCAST(BL_PC, mapit->next(iter))) {
 		if( sd->bl.m != m || sd->pvp_timer != INVALID_TIMER )
 			continue; // not applicable
 
@@ -13605,7 +13605,7 @@ BUILDIN(recovery)
 	struct s_mapiterator* iter;
 
 	iter = mapit_getallusers();
-	for (sd = (struct map_session_data *)mapit->first(iter); mapit->exists(iter); sd = (struct map_session_data *)mapit->next(iter)) {
+	for (sd = BL_UCAST(BL_PC, mapit->first(iter)); mapit->exists(iter); sd = BL_UCAST(BL_PC, mapit->next(iter))) {
 		if(pc_isdead(sd))
 			status->revive(&sd->bl, 100, 100);
 		else

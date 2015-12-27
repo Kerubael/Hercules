@@ -1489,7 +1489,7 @@ bool send_users_tochar(void) {
 	WFIFOW(chrif->fd,0) = 0x2aff;
 
 	iter = mapit_getallusers();
-	for (sd = (struct map_session_data *)mapit->first(iter); mapit->exists(iter); sd = (struct map_session_data *)mapit->next(iter)) {
+	for (sd = BL_UCAST(BL_PC, mapit->first(iter)); mapit->exists(iter); sd = BL_UCAST(BL_PC, mapit->next(iter))) {
 		WFIFOL(chrif->fd,6+8*i) = sd->status.account_id;
 		WFIFOL(chrif->fd,6+8*i+4) = sd->status.char_id;
 		i++;
