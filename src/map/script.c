@@ -18387,13 +18387,13 @@ BUILDIN(setcashmount)
 		return true;
 	if (pc_hasmount(sd)) {
 		clif->msgtable(sd, MSG_REINS_CANT_USE_MOUNTED);
-		script_pushint(st,0);//can't mount with one of these
+		script_pushint(st, 0); // Can't mount with one of these
 	} else {
 		if (sd->sc.data[SC_ALL_RIDING])
 			status_change_end(&sd->bl, SC_ALL_RIDING, INVALID_TIMER);
 		else
-			sc_start(NULL,&sd->bl, SC_ALL_RIDING, 100, 0, -1);
-		script_pushint(st,1);//in both cases, return 1.
+			sc_start(NULL, &sd->bl, SC_ALL_RIDING, 100, 25, -1);
+		script_pushint(st, 1); // In both cases, return 1.
 	}
 	return true;
 }
